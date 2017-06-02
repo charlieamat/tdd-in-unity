@@ -55,6 +55,20 @@ namespace Editor
                 Assert.AreEqual(0.25f, Target.fillAmount); 
             }
 
+            [Test]
+            public void _Hearts_Are_Replenished_In_Order()
+            {
+                var image = new GameObject().AddComponent<Image>();
+                image.fillAmount = 0;
+                Target.fillAmount = 0;
+                var heartContainer = new HeartContainer(
+                    new List<Heart> { new Heart(image), new Heart(Target)});
+
+                heartContainer.Replenish(1);
+
+                Assert.AreEqual(0, Target.fillAmount);
+            }
+
             public class HeartContainer
             {
                 private readonly List<Heart> _hearts;
@@ -66,8 +80,13 @@ namespace Editor
 
                 public void Replenish(int numberOfHeartPieces)
                 {
+                    var numberOfHeartPiecesRemaining = numberOfHeartPieces;
                     foreach (var heart in _hearts)
+                    {
+                        numberOfHeartPiecesRemaining -= Heart.HeartPiecesPerHeart - heart.CurrentNumberOfHeartPieces;
                         heart.Replenish(numberOfHeartPieces);
+                        if (numberOfHeartPiecesRemaining <= 0) break;
+                    }
                 }
             }
         }
