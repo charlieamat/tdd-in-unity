@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Editor
 {
-    public partial class HeartTests
+    public class HeartTests
     {
         private Image _image;
         private Heart _heart;

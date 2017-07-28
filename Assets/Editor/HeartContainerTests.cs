@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Editor.Infrastructure;
 using NUnit.Framework;
-using UnityEngine;
 using UnityEngine.UI;
 
 namespace Editor
@@ -14,29 +13,23 @@ namespace Editor
             [SetUp]
             public void BeforeEveryTest()
             {
-                Target = new GameObject().AddComponent<Image>();
+                Target = An.Image();
             }
 
             [Test]
             public void _0_Sets_Image_With_0_Fill_To_0_Fill()
             {
-                Target.fillAmount = 0;
-                var heart = new Heart(Target);
-                var heartContainer = new HeartContainer(new List<Heart> {heart});
+                ((HeartContainer) A.HeartContainer().With(
+                    A.Heart().With(Target))).Replenish(0);
 
-                heartContainer.Replenish(0);
-
-                Assert.AreEqual(0, Target.fillAmount); 
+                Assert.AreEqual(0, Target.fillAmount);
             }
 
             [Test]
             public void _1_Sets_Image_With_0_Fill_To_25_Percent_Fill()
             {
-                Target.fillAmount = 0;
-                var heart = new Heart(Target);
-                var heartContainer = new HeartContainer(new List<Heart> {heart});
-
-                heartContainer.Replenish(1);
+                ((HeartContainer) A.HeartContainer()
+                    .With(A.Heart().With(Target))).Replenish(1);
 
                 Assert.AreEqual(0.25f, Target.fillAmount);
             }
@@ -44,50 +37,22 @@ namespace Editor
             [Test]
             public void _Empty_Hearts_Are_Replenished()
             {
-                Target.fillAmount = 0;
-                var image = new GameObject().AddComponent<Image>();
-                image.fillAmount = 1;
-                var heartContainer = new HeartContainer(
-                    new List<Heart> {new Heart(image), new Heart(Target)});
+                ((HeartContainer) A.HeartContainer()
+                    .With(
+                        A.Heart().With(An.Image().WithFillAmount(1)),
+                        A.Heart().With(Target))).Replenish(1);
 
-                heartContainer.Replenish(1);
-
-                Assert.AreEqual(0.25f, Target.fillAmount); 
+                Assert.AreEqual(0.25f, Target.fillAmount);
             }
 
             [Test]
             public void _Hearts_Are_Replenished_In_Order()
             {
-                var image = new GameObject().AddComponent<Image>();
-                image.fillAmount = 0;
-                Target.fillAmount = 0;
-                var heartContainer = new HeartContainer(
-                    new List<Heart> { new Heart(image), new Heart(Target)});
-
-                heartContainer.Replenish(1);
+                ((HeartContainer) A.HeartContainer()
+                    .With(
+                        A.Heart(), A.Heart().With(Target))).Replenish(1);
 
                 Assert.AreEqual(0, Target.fillAmount);
-            }
-
-            public class HeartContainer
-            {
-                private readonly List<Heart> _hearts;
-
-                public HeartContainer(List<Heart> hearts)
-                {
-                    _hearts = hearts;
-                }
-
-                public void Replenish(int numberOfHeartPieces)
-                {
-                    var numberOfHeartPiecesRemaining = numberOfHeartPieces;
-                    foreach (var heart in _hearts)
-                    {
-                        numberOfHeartPiecesRemaining -= Heart.HeartPiecesPerHeart - heart.CurrentNumberOfHeartPieces;
-                        heart.Replenish(numberOfHeartPieces);
-                        if (numberOfHeartPiecesRemaining <= 0) break;
-                    }
-                }
             }
         }
     }
