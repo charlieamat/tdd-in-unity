@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 public class HeartContainer
 {
@@ -9,14 +10,29 @@ public class HeartContainer
         _hearts = hearts;
     }
 
-    public void Replenish(int numberOfHeartPieces)
+    public void Replenish(int heartPieces)
     {
-        var numberOfHeartPiecesRemaining = numberOfHeartPieces;
         foreach (var heart in _hearts)
         {
-            numberOfHeartPiecesRemaining -= Heart.HeartPiecesPerHeart - heart.CurrentNumberOfHeartPieces;
-            heart.Replenish(numberOfHeartPieces);
-            if (numberOfHeartPiecesRemaining <= 0) break;
+            var toReplenish = heartPieces < heart.EmptyHeartPieces
+                ? heartPieces 
+                : heart.EmptyHeartPieces;
+            heartPieces -= heart.EmptyHeartPieces;
+            heart.Replenish(toReplenish);
+            if (heartPieces <= 0) break;
+        }
+    }
+
+    public void Deplete(int heartPieces)
+    {
+        foreach (var heart in _hearts.AsEnumerable().Reverse())
+        {
+            var toDeplete = heartPieces < heart.FilledHeartPieces
+                ? heartPieces 
+                : heart.FilledHeartPieces;
+            heartPieces -= heart.FilledHeartPieces;
+            heart.Deplete(toDeplete);
+            if (heartPieces <= 0) break;
         }
     }
 }

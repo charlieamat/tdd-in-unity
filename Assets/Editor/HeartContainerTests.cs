@@ -54,6 +54,18 @@ namespace Editor
 
                 Assert.AreEqual(0, Target.fillAmount);
             }
+
+            [Test]
+            public void _Distributes_Heart_Pieces_Across_Multiple_Unfilled_Hearts()
+            {
+                ((HeartContainer) A.HeartContainer()
+                    .With(
+                        A.Heart()
+                            .With(An.Image().WithFillAmount(0.75f)),
+                        A.Heart().With(Target))).Replenish(2);
+
+                Assert.AreEqual(0.25f, Target.fillAmount);
+            }
         }
     }
 }

@@ -12,9 +12,14 @@ public class Heart
         _image = image;
     }
 
-    public int CurrentNumberOfHeartPieces
+    public int FilledHeartPieces
     {
-        get { return (int) (_image.fillAmount * HeartPiecesPerHeart); }
+        get { return CalculateFilledHeartPieces(); }
+    }
+
+    public int EmptyHeartPieces
+    {
+        get { return HeartPiecesPerHeart - CalculateFilledHeartPieces(); }
     }
 
     public void Replenish(int numberOfHeartPieces)
@@ -27,5 +32,10 @@ public class Heart
     {
         if (numberOfHeartPieces < 0) throw new ArgumentOutOfRangeException("numberOfHeartPieces");
         _image.fillAmount -= numberOfHeartPieces * FillPerHeartPiece;
+    }
+
+    private int CalculateFilledHeartPieces()
+    {
+        return (int) (_image.fillAmount * HeartPiecesPerHeart);
     }
 }

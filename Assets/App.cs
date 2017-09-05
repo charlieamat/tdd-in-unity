@@ -1,25 +1,30 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class App : MonoBehaviour
 {
-    [SerializeField] private Image _image;
-    private Heart _heart;
+    [SerializeField] private List<Image> _images;
+    [SerializeField] private int _amount;
+
+    private HeartContainer _heartContainer;
 
     private void Start()
     {
-        _heart = new Heart(_image);
+        _heartContainer = new HeartContainer(
+            _images.Select(image => new Heart(image)).ToList());
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            _heart.Replenish(1); 
+            _heartContainer.Replenish(_amount);
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            _heart.Deplete(1); 
+            _heartContainer.Deplete(_amount);
         }
     }
 }

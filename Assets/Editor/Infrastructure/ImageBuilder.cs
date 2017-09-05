@@ -5,9 +5,9 @@ namespace Editor.Infrastructure
 {
     public class ImageBuilder : TestDataBuilder<Image>
     {
-        private int _fillAmount;
+        private float _fillAmount;
 
-        public ImageBuilder(int fillAmount)
+        public ImageBuilder(float fillAmount)
         {
             _fillAmount = fillAmount;
         }
@@ -16,7 +16,7 @@ namespace Editor.Infrastructure
         {
         }
 
-        public ImageBuilder WithFillAmount(int fillAmount)
+        public ImageBuilder WithFillAmount(float fillAmount)
         {
             _fillAmount = fillAmount;
             return this;
