@@ -5,6 +5,9 @@ public class Player
     public int CurrentHealth { get; private set; }
     public int MaxiumumHealth { get; private set; }
 
+    public event EventHandler<HealedEventArgs> Healed;
+    public event EventHandler<DamagedEventArgs> Damaged;
+
     public Player(int currentHealth, int maximumHealth = 12)
     {
         if (currentHealth < 0) throw new ArgumentOutOfRangeException("currentHealth");
@@ -15,11 +18,37 @@ public class Player
 
     public void Heal(int amount)
     {
-        CurrentHealth = Math.Min(CurrentHealth + amount, MaxiumumHealth);
+        var newHealth = Math.Min(CurrentHealth + amount, MaxiumumHealth);
+        if (Healed != null)
+            Healed(this, new HealedEventArgs(newHealth - CurrentHealth));
+        CurrentHealth = newHealth;
     }
 
     public void Damage(int amount)
     {
-        CurrentHealth = Math.Max(CurrentHealth - amount, 0);
+        var newHealth = Math.Max(CurrentHealth - amount, 0);
+        if (Damaged != null)
+            Damaged(this, new DamagedEventArgs(CurrentHealth - newHealth));
+        CurrentHealth = newHealth;
+    }
+
+    public class HealedEventArgs : EventArgs
+    {
+        public HealedEventArgs(int amount)
+        {
+            Amount = amount;
+        }
+
+        public int Amount { get; private set; }
+    }
+
+    public class DamagedEventArgs : EventArgs
+    {
+        public DamagedEventArgs(int amount)
+        {
+            Amount = amount;
+        }
+
+        public int Amount { get; private set; }
     }
 }

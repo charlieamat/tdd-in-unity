@@ -9,22 +9,27 @@ public class App : MonoBehaviour
     [SerializeField] private int _amount;
 
     private HeartContainer _heartContainer;
+    private Player _player;
 
     private void Start()
     {
+        _player = new Player(20, 20);
         _heartContainer = new HeartContainer(
             _images.Select(image => new Heart(image)).ToList());
+
+        _player.Healed += (sender, args) => _heartContainer.Replenish(args.Amount);
+        _player.Damaged += (sender, args) => _heartContainer.Deplete(args.Amount);
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            _heartContainer.Replenish(_amount);
+            _player.Heal(_amount);
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            _heartContainer.Deplete(_amount);
+            _player.Damage(_amount);
         }
     }
 }
